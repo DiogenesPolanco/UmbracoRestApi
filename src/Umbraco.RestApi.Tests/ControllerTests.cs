@@ -103,12 +103,12 @@ namespace Umbraco.RestApi.Tests
         
         protected async Task<JObject> Get_Id_Result(Action<IAppBuilder> appBuilder, string segment)
         {
-            return await GetResult(appBuilder, new Uri($"http://testserver/umbraco/rest/v1/{segment}/123"), HttpStatusCode.OK);
+            return await GetResult(appBuilder, new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534"), HttpStatusCode.OK);
         }
 
         protected async Task<JObject> Get_Metadata_Is_200(Action<IAppBuilder> appBuilder, string segment)
         {
-            var djson = await GetResult(appBuilder, new Uri($"http://testserver/umbraco/rest/v1/{segment}/123/meta"), HttpStatusCode.OK);
+            var djson = await GetResult(appBuilder, new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534/meta"), HttpStatusCode.OK);
             return djson;
         }
 
@@ -142,7 +142,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/123"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534"),
                     Method = HttpMethod.Put,
                 };
 
@@ -189,7 +189,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/123/children"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534/children"),
                     Method = HttpMethod.Get,
                 };
 
@@ -212,7 +212,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/123/descendants?page=2&size=3&query=hello"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534/descendants?page=2&size=3&query=hello"),
                     Method = HttpMethod.Get,
                 };
 
@@ -235,7 +235,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/123/ancestors?page=2&size=3&query=hello"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{segment}/9d072570-aa6f-4902-8c8d-34a49abc3534/ancestors?page=2&size=3&query=hello"),
                     Method = HttpMethod.Get,
                 };
 

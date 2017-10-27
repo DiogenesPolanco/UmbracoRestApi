@@ -124,14 +124,14 @@ namespace Umbraco.RestApi.Tests
                  (testServices) =>
                  {
                      var mockMemberService = Mock.Get(testServices.ServiceContext.MemberService);
-                     mockMemberService.Setup(x => x.GetById(It.IsAny<int>())).Returns(() => ModelMocks.SimpleMockedMember());
+                     mockMemberService.Setup(x => x.GetByKey(It.IsAny<Guid>())).Returns(() => ModelMocks.SimpleMockedMember());
                  });
 
             using (var server = TestServer.Create(builder => startup.UseDefaultTestSetup(builder)))
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.MembersSegment}/123"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.MembersSegment}/9d072570-aa6f-4902-8c8d-34a49abc3534"),
                     Method = HttpMethod.Get,
                 };
 
@@ -148,7 +148,7 @@ namespace Umbraco.RestApi.Tests
 
                 var djson = JsonConvert.DeserializeObject<JObject>(json);
 
-                Assert.AreEqual("/umbraco/rest/v1/members/123", djson["_links"]["self"]["href"].Value<string>());
+                Assert.AreEqual("/umbraco/rest/v1/members/9d072570-aa6f-4902-8c8d-34a49abc3534", djson["_links"]["self"]["href"].Value<string>());
                 Assert.AreEqual("/umbraco/rest/v1/members{?page,size,query,orderBy,direction,memberTypeAlias}", djson["_links"]["root"]["href"].Value<string>());
 
                 var properties = djson["properties"].ToObject<IDictionary<string, object>>();

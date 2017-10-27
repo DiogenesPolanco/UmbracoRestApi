@@ -47,7 +47,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri(string.Format("http://testserver/umbraco/rest/v1/{0}/{1}/123/children", RouteConstants.ContentSegment, RouteConstants.PublishedSegment)),
+                    RequestUri = new Uri(string.Format("http://testserver/umbraco/rest/v1/{0}/{1}/9d072570-aa6f-4902-8c8d-34a49abc3534/children", RouteConstants.ContentSegment, RouteConstants.PublishedSegment)),
                     Method = HttpMethod.Get,
                 };
 
@@ -120,7 +120,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri(string.Format("http://testserver/umbraco/rest/v1/{0}/{1}/123", RouteConstants.ContentSegment, RouteConstants.PublishedSegment)),
+                    RequestUri = new Uri(string.Format("http://testserver/umbraco/rest/v1/{0}/{1}/9d072570-aa6f-4902-8c8d-34a49abc3534", RouteConstants.ContentSegment, RouteConstants.PublishedSegment)),
                     Method = HttpMethod.Get,
                 };
 

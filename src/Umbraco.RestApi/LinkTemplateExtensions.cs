@@ -14,5 +14,11 @@ namespace Umbraco.RestApi
             link.Href = link.Href.Replace("{id}", id.ToString());
             return link;
         }
+
+        public static Link CreateLinkTemplate(this Link link, Guid id)
+        {
+            link.Href = link.Href.Replace("{id}", id.ToString());
+            return link;
+        }
     }
 }

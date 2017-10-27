@@ -15,20 +15,20 @@
             base.CreateHypermedia();
 
             //required link to self
-            Href = LinkTemplates.PublishedContent.Self.CreateLink(new { id = Id }).Href;
+            Href = LinkTemplates.PublishedContent.Self.CreateLink(new { id = Key }).Href;
             Rel = LinkTemplates.PublishedContent.Self.Rel;
 
             Links.Add(LinkTemplates.PublishedContent.Root);
 
-            Links.Add( LinkTemplates.PublishedContent.PagedChildren.CreateLinkTemplate(Id));
-            Links.Add(LinkTemplates.PublishedContent.PagedDescendants.CreateLinkTemplate(Id)); ;
-            Links.Add(LinkTemplates.PublishedContent.PagedAncestors.CreateLinkTemplate(Id));
+            Links.Add( LinkTemplates.PublishedContent.PagedChildren.CreateLinkTemplate(Key));
+            Links.Add(LinkTemplates.PublishedContent.PagedDescendants.CreateLinkTemplate(Key)); ;
+            Links.Add(LinkTemplates.PublishedContent.PagedAncestors.CreateLinkTemplate(Key));
 
             Links.Add(LinkTemplates.PublishedContent.Parent.CreateLink(new { parentId = ParentId }));
             
             //links to the relations api
-            Links.Add(LinkTemplates.Relations.Children.CreateLinkTemplate(Id));
-            Links.Add(LinkTemplates.Relations.Parents.CreateLinkTemplate(Id));
+            Links.Add(LinkTemplates.Relations.Children.CreateLinkTemplate(Key));
+            Links.Add(LinkTemplates.Relations.Parents.CreateLinkTemplate(Key));
         }
     }
 

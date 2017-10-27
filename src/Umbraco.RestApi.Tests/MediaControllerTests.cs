@@ -230,7 +230,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.MediaSegment}/123/children?page=2&size=2"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.MediaSegment}/9d072570-aa6f-4902-8c8d-34a49abc3534/children?page=2&size=2"),
                     Method = HttpMethod.Get,
                 };
 

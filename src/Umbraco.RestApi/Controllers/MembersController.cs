@@ -94,9 +94,9 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}")]
-        public Task<HttpResponseMessage> Get(int id)
+        public Task<HttpResponseMessage> Get(Guid id)
         {
-            var member = Services.MemberService.GetById(id); 
+            var member = Services.MemberService.GetByKey(id); 
             var result = Mapper.Map<MemberRepresentation>(member);
 
             return Task.FromResult(result == null
@@ -154,13 +154,13 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpPut]
         [CustomRoute("{id}")]
-        public Task<HttpResponseMessage> Put(int id, MemberRepresentation content)
+        public Task<HttpResponseMessage> Put(Guid id, MemberRepresentation content)
         {
             if (content == null) return Task.FromResult(Request.CreateResponse(HttpStatusCode.NotFound));
 
             try
             {
-                var found = Services.MemberService.GetById(id);
+                var found = Services.MemberService.GetByKey(id);
                 if (found == null)
                     return Task.FromResult(Request.CreateResponse(HttpStatusCode.NotFound));
 
@@ -170,7 +170,7 @@ namespace Umbraco.RestApi.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    throw ValidationException(ModelState, content, LinkTemplates.Members.Self, id: id);
+                    throw ValidationException(ModelState, content, LinkTemplates.Members.Self, id: found.Id);
                 }
 
                 Mapper.Map(content, found);
@@ -188,9 +188,9 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpDelete]
         [CustomRoute("{id}")]
-        public virtual Task<HttpResponseMessage> Delete(int id)
+        public virtual Task<HttpResponseMessage> Delete(Guid id)
         {
-            var found = Services.MemberService.GetById(id);
+            var found = Services.MemberService.GetByKey(id);
             if (found == null)
                 return Task.FromResult(Request.CreateResponse(HttpStatusCode.NotFound));
 

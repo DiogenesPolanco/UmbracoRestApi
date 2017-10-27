@@ -92,9 +92,13 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}")]
-        public async Task<HttpResponseMessage> Get(int id)
+        public async Task<HttpResponseMessage> Get(Guid id)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaRead))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaRead))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             var content = Services.MediaService.GetById(id);
@@ -107,9 +111,13 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/meta")]
-        public async Task<HttpResponseMessage> GetMetadata(int id)
+        public async Task<HttpResponseMessage> GetMetadata(Guid id)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaRead))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaRead))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             var found = Services.MediaService.GetById(id);
@@ -117,7 +125,7 @@ namespace Umbraco.RestApi.Controllers
 
             var helper = new ContentControllerHelper(Services.TextService);
 
-            var result = new ContentMetadataRepresentation(LinkTemplates.Media.MetaData, LinkTemplates.Media.Self, id)
+            var result = new ContentMetadataRepresentation(LinkTemplates.Media.MetaData, LinkTemplates.Media.Self, intId.Result)
             {
                 Fields = helper.GetDefaultFieldMetaData(ClaimsPrincipal),
                 Properties = Mapper.Map<IDictionary<string, ContentPropertyInfo>>(found),
@@ -129,14 +137,18 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/children")]
-        public async Task<HttpResponseMessage> GetChildren(int id,
+        public async Task<HttpResponseMessage> GetChildren(Guid id,
             [ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaRead))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaRead))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
-            var items = Services.MediaService.GetPagedChildren(id, query.Page - 1, query.PageSize, out var total, filter: query.Query);
+            var items = Services.MediaService.GetPagedChildren(intId.Result, query.Page - 1, query.PageSize, out var total, filter: query.Query);
             var pages = ContentControllerHelper.GetTotalPages(total, query.PageSize);
             var mapped = Mapper.Map<IEnumerable<MediaRepresentation>>(items).ToList();
 
@@ -147,14 +159,18 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/descendants/")]
-        public async Task<HttpResponseMessage> GetDescendants(int id,
+        public async Task<HttpResponseMessage> GetDescendants(Guid id,
             [ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaRead))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaRead))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
-            var items = Services.MediaService.GetPagedDescendants(id, query.Page - 1, query.PageSize, out var total, filter: query.Query);
+            var items = Services.MediaService.GetPagedDescendants(intId.Result, query.Page - 1, query.PageSize, out var total, filter: query.Query);
             var pages = (total + query.PageSize - 1) / query.PageSize;
             var mapped = Mapper.Map<IEnumerable<MediaRepresentation>>(items).ToList();
             
@@ -164,14 +180,18 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/ancestors/")]
-        public async Task<HttpResponseMessage> GetAncestors(int id,
+        public async Task<HttpResponseMessage> GetAncestors(Guid id,
             [ModelBinder(typeof(PagedQueryModelBinder))]
             PagedRequest query)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaRead))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaRead))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
-            var items = Services.MediaService.GetAncestors(id).ToArray();
+            var items = Services.MediaService.GetAncestors(intId.Result).ToArray();
             var total = items.Length;
             var pages = (total + query.PageSize - 1) / query.PageSize;
             var paged = items.Skip(ContentControllerHelper.GetSkipSize(query.Page - 1, query.PageSize)).Take(query.PageSize);
@@ -277,12 +297,16 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpPut]
         [CustomRoute("{id}")]
-        public async Task<HttpResponseMessage> Put(int id, MediaRepresentation content)
+        public async Task<HttpResponseMessage> Put(Guid id, MediaRepresentation content)
         {
             if (content == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
             //TODO: Since this Id is based on a route parameter it should be possible to authz this with an attribute
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaUpdate))
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaUpdate))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             try
@@ -305,10 +329,14 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpDelete]
         [CustomRoute("{id}")]
-        public virtual async Task<HttpResponseMessage> Delete(int id)
+        public virtual async Task<HttpResponseMessage> Delete(Guid id)
         {
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
             //TODO: Since this Id is based on a route parameter it should be possible to authz this with an attribute
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaDelete))
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaDelete))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             var found = Services.MediaService.GetById(id);
@@ -328,10 +356,14 @@ namespace Umbraco.RestApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [CustomRoute("{id}/upload")]
-        public async Task<HttpResponseMessage> UploadFile(int id, string property = "umbracoFile")
+        public async Task<HttpResponseMessage> UploadFile(Guid id, string property = "umbracoFile")
         {
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
             //TODO: Since this Id is based on a route parameter it should be possible to authz this with an attribute
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaUpdate))
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaUpdate))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             if (!Request.Content.IsMimeMultipartContent())
@@ -372,9 +404,13 @@ namespace Umbraco.RestApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [CustomRoute("{id}/upload")]
-        public async Task<HttpResponseMessage> PostFile(int id, string mediaType = null, string property = Constants.Conventions.Media.File)
+        public async Task<HttpResponseMessage> PostFile(Guid id, string mediaType = null, string property = Constants.Conventions.Media.File)
         {
-            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(id), AuthorizationPolicies.MediaCreate))
+            var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Media);
+            if (intId.Result < 0)
+                Request.CreateResponse(HttpStatusCode.NotFound);
+
+            if (!await AuthorizationService.AuthorizeAsync(ClaimsPrincipal, new ContentResourceAccess(intId.Result), AuthorizationPolicies.MediaCreate))
                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
 
             if (!Request.Content.IsMimeMultipartContent())

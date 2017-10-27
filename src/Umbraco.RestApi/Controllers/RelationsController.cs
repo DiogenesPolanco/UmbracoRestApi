@@ -21,7 +21,7 @@ namespace Umbraco.RestApi.Controllers
     
     [ResourceAuthorize(Policy = AuthorizationPolicies.DefaultRestApi)]
     [UmbracoRoutePrefix("rest/v1/relations")]
-    public class RelationsController : UmbracoHalController, ICrudController<RelationRepresentation>, IRootController
+    public class RelationsController : UmbracoHalController, IRootController
     {
         /// <summary>
         /// Default ctor
@@ -72,9 +72,9 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("children/{id}")]
-        public Task<HttpResponseMessage> GetByParent(int id, string relationType = null)
+        public Task<HttpResponseMessage> GetByParent(Guid id, string relationType = null)
         {
-            var parent = Services.EntityService.Get(id);            
+            var parent = Services.EntityService.GetByKey(id);            
 
             if (parent == null)
                 return Task.FromResult(Request.CreateResponse(HttpStatusCode.NotFound));
@@ -88,9 +88,9 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("parents/{id}")]
-        public Task<HttpResponseMessage> GetByChild(int id, string relationType = null)
+        public Task<HttpResponseMessage> GetByChild(Guid id, string relationType = null)
         {
-            var child = Services.EntityService.Get(id);
+            var child = Services.EntityService.GetByKey(id);
             if (child == null)
                 return Task.FromResult(Request.CreateResponse(HttpStatusCode.NotFound));
 

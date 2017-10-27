@@ -69,7 +69,7 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}")]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(Guid id)
         {
             var content = Umbraco.TypedContent(id);
             if (content == null) return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -86,7 +86,7 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/children")]
-        public HttpResponseMessage GetChildren(int id,
+        public HttpResponseMessage GetChildren(Guid id,
             [System.Web.Http.ModelBinding.ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query)
         {
@@ -108,7 +108,7 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/descendants/")]
-        public HttpResponseMessage GetDescendants(int id,
+        public HttpResponseMessage GetDescendants(Guid id,
             [System.Web.Http.ModelBinding.ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query)
         {
@@ -128,7 +128,7 @@ namespace Umbraco.RestApi.Controllers
 
         [HttpGet]
         [CustomRoute("{id}/ancestors/{page?}/{pageSize?}")]
-        public HttpResponseMessage GetAncestors(int id,
+        public HttpResponseMessage GetAncestors(Guid id,
             [System.Web.Http.ModelBinding.ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query)
         {
@@ -153,12 +153,17 @@ namespace Umbraco.RestApi.Controllers
         public HttpResponseMessage GetQuery(
             [System.Web.Http.ModelBinding.ModelBinder(typeof(PagedQueryModelBinder))]
             PagedQuery query,
-            int id = 0)
+            Guid id = default(Guid))
         {
             var rootQuery = "";
-            if (id > 0)
+            if (id != default(Guid))
             {
-                rootQuery = $"//*[@id='{id}']";
+                var intId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Document);
+
+                if (intId.Result < 0)
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+
+                rootQuery = $"//*[@id='{intId.Result}']";
             }
 
             var skip = (query.Page - 1) * query.PageSize;

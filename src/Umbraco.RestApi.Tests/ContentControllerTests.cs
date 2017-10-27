@@ -263,7 +263,7 @@ namespace Umbraco.RestApi.Tests
                             }));
                 });
 
-            var djson = await GetResult(startup.UseDefaultTestSetup, new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.ContentSegment}/456/children"), HttpStatusCode.OK);
+            var djson = await GetResult(startup.UseDefaultTestSetup, new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.ContentSegment}/9d072570-aa6f-4902-8c8d-34a49abc3534/children"), HttpStatusCode.OK);
             Assert.AreEqual(2, djson["_links"]["content"].Count());            
             Assert.AreEqual(2, djson["_embedded"]["content"].Count());
             Assert.AreEqual(10, djson["_embedded"]["content"].First["id"].Value<int>());
@@ -324,7 +324,7 @@ namespace Umbraco.RestApi.Tests
             {
                 var request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.ContentSegment}/123/children?page=2&size=2"),
+                    RequestUri = new Uri($"http://testserver/umbraco/rest/v1/{RouteConstants.ContentSegment}/9d072570-aa6f-4902-8c8d-34a49abc3534/children?page=2&size=2"),
                     Method = HttpMethod.Get,
                 };
 

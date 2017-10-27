@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Umbraco.RestApi.Controllers
@@ -8,6 +9,6 @@ namespace Umbraco.RestApi.Controllers
     /// </summary>
     public interface IMetadataController
     {
-        Task<HttpResponseMessage> GetMetadata(int id);
+        Task<HttpResponseMessage> GetMetadata(Guid id);
     }
 }
