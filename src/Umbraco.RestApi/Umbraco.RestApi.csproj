@@ -306,6 +306,7 @@
     <Compile Include="Models\PublishedContentRepresentation.cs" />
     <Compile Include="Models\RelationListRepresentation.cs" />
     <Compile Include="Models\RelationRepresentation.cs" />
+    <Compile Include="ParameterSwapControllerActionSelector.cs" />
     <Compile Include="RestApiCookieManager.cs" />
     <Compile Include="Routing\UmbracoRoutePrefixAttribute.cs" />
     <Compile Include="Routing\CustomRouteAttributeDirectRouteProvider.cs" />
@@ -328,6 +329,7 @@
     <Compile Include="Serialization\HtmlStringConverter.cs" />
     <Compile Include="SpecificAssemblyResolver.cs" />
     <Compile Include="SpecificControllerTypeResolver.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="UmbracoRestApiOptionsInstance.cs" />
     <Compile Include="Controllers\HalFormatterConfigurationAttribute.cs" />
     <Compile Include="ModelStateExtensions.cs" />

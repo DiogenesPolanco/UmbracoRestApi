@@ -41,10 +41,23 @@ namespace Umbraco.RestApi.Controllers
     /// for that user need to be looked up. The only way around this would be to be able to have an IPermissionService that could be added
     /// to the rest api options and a developer could replace that.
     /// </remarks>
+    [ContentControllerConfiguration]
     [ResourceAuthorize(Policy = AuthorizationPolicies.DefaultRestApi)]
     [UmbracoRoutePrefix("rest/v1/content")]
     public class ContentController : UmbracoHalController, ITraversableController<ContentRepresentation>
     {
+
+        private class ContentControllerConfigurationAttribute : Attribute, IControllerConfiguration
+        {
+            public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
+            {
+                controllerSettings.Services.Replace(typeof(IHttpActionSelector), new ParameterSwapControllerActionSelector(
+                    new ParameterSwapControllerActionSelector.ParameterSwapInfo("Get", "id", typeof(int), typeof(Guid))
+                ));
+            }
+        }
+
+
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -95,6 +108,18 @@ namespace Umbraco.RestApi.Controllers
             var representation = new ContentListRepresenation(result);
 
             return Request.CreateResponse(HttpStatusCode.OK, representation);
+        }
+
+        [HttpGet]
+        [CustomRoute("{id}")]
+        public async Task<HttpResponseMessage> Get(Guid id)
+        {
+            //added here as otherwise it would require a substantial change to ContentResourceAccess
+            var nodeId = Services.EntityService.GetIdForKey(id, UmbracoObjectTypes.Document);
+            if(nodeId.Success)
+                return await Get(nodeId.Result);
+
+            return Request.CreateResponse(HttpStatusCode.NotFound);
         }
 
         [HttpGet]
